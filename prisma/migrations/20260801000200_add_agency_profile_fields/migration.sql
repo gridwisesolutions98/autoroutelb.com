@@ -1,0 +1,6 @@
+ALTER TABLE "User" ADD COLUMN "logoUrl" TEXT;
+ALTER TABLE "User" ADD COLUMN "description" TEXT;
+ALTER TABLE "User" ADD COLUMN "phoneNumber" TEXT;
+ALTER TABLE "User" ADD COLUMN "workingHours" TEXT;
+ALTER TABLE "User" ADD COLUMN "couponCode" TEXT;
+ALTER TABLE "User" ADD COLUMN "couponPercent" INTEGER;

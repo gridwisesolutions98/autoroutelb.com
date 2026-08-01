@@ -1,0 +1,2 @@
+ALTER TABLE "Subscription" ADD COLUMN "paymentMethod" TEXT NOT NULL DEFAULT 'WHISH';
+ALTER TABLE "Car" ADD COLUMN "featuredPaymentMethod" TEXT NOT NULL DEFAULT 'WHISH';

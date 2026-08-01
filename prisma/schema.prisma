@@ -1,0 +1,157 @@
+datasource db {
+  provider = "sqlite"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id             String         @id @default(cuid())
+  username       String         @unique
+  password       String
+  role           Role           @default(VENDOR)
+  companyName    String?
+  whishNumber    String?
+  omtNumber      String?
+  whatsappNumber String?
+  contactEmail   String?
+  address        String?
+  logoUrl        String?
+  description    String?
+  phoneNumber    String?
+  workingHours   String?
+  couponCode     String?
+  couponPercent  Int?
+  approvalStatus ApprovalStatus @default(PENDING)
+  cars           Car[]
+  subscription   Subscription?
+  createdAt      DateTime       @default(now())
+  isBlocked      Boolean        @default(false)
+
+  @@index([role, approvalStatus])
+}
+
+enum Role {
+  OWNER
+  VENDOR
+}
+
+enum ApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Subscription {
+  id             String        @id @default(cuid())
+  userId         String        @unique
+  user           User          @relation(fields: [userId], references: [id])
+  plan           Plan          @default(BASIC)
+  billingCycle   BillingCycle  @default(MONTHLY)
+  status         SubStatus     @default(PENDING)
+  paymentStatus  PaymentStatus @default(PENDING)
+  paymentMethod  PaymentMethod @default(WHISH)
+  transactionRef String?
+  isBlocked      Boolean       @default(false)
+  reminderSentAt DateTime?
+  expiresAt      DateTime
+}
+
+enum Plan {
+  BASIC
+  PREMIUM
+}
+
+enum BillingCycle {
+  MONTHLY
+  YEARLY
+}
+
+enum SubStatus {
+  ACTIVE
+  EXPIRED
+  PENDING
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+}
+
+enum PaymentMethod {
+  WHISH
+  OMT
+}
+
+model Car {
+  id                     String        @id @default(cuid())
+  name                   String
+  brand                  String        @default("")
+  model                  String        @default("")
+  category               String
+  year                   Int?
+  pricePerDay            Float
+  transmission           String
+  seats                  Int
+  image                  String
+  isApproved             Boolean       @default(true)
+  isRented               Boolean       @default(false)
+  isFeatured             Boolean       @default(false)
+  featuredPaymentStatus  PaymentStatus @default(PENDING)
+  featuredPaymentMethod  PaymentMethod @default(WHISH)
+  featuredTransactionRef String?
+  viewCount              Int           @default(0)
+  vendorId               String
+  vendor                 User          @relation(fields: [vendorId], references: [id])
+  bookings               Booking[]
+  photos                 CarPhoto[]
+  createdAt              DateTime      @default(now())
+
+  @@index([vendorId])
+  @@index([category])
+  @@index([isApproved, isRented])
+}
+
+model CarPhoto {
+  id        String   @id @default(cuid())
+  carId     String
+  car       Car      @relation(fields: [carId], references: [id], onDelete: Cascade)
+  url       String
+  createdAt DateTime @default(now())
+}
+
+model Booking {
+  id             String        @id @default(cuid())
+  carId          String
+  car            Car           @relation(fields: [carId], references: [id])
+  renterName     String
+  renterPhone    String
+  startDate      DateTime
+  endDate        DateTime
+  totalPrice     Float
+  depositAmount  Float         @default(0)
+  paymentMethod  PaymentMethod @default(WHISH)
+  paymentStatus  PaymentStatus @default(PENDING)
+  transactionRef String?
+  createdAt      DateTime      @default(now())
+
+  @@index([carId])
+  @@index([startDate, endDate])
+}
+model ActivityLog {
+  id         String   @id @default(cuid())
+  action     String
+  targetType String
+  targetId   String
+  details    String?
+  createdAt  DateTime @default(now())
+}
+
+model Feedback {
+  id        String   @id @default(cuid())
+  fullName  String
+  rating    Int      @default(5)
+  message   String
+  createdAt DateTime @default(now())
+}
