@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "prisma migrate deploy && next start",
+    "start": "node scripts/prepareVolume.js && prisma migrate deploy && next start",
     "lint": "eslint",
     "backup": "node scripts/backup.js",
     "check-subscriptions": "node scripts/checkSubscriptions.js",
