@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { cookies } from "next/headers";
 import { getDictionary, Locale } from "@/lib/i18n";
-import LanguageSwitcher from "./LanguageSwitcher";
+import HeroNav from "./HeroNav";
 
 export default async function HomePage() {
   const cookieStore = await cookies();
@@ -10,14 +10,7 @@ export default async function HomePage() {
 
   return (
     <div className="hero">
-      <div className="hero-nav">
-        <a href="#about">{t.nav.about}</a>
-        <a href="#contact">{t.nav.contact}</a>
-        <Link href="/privacy-policy">{t.nav.privacy}</Link>
-        <Link href="/terms-conditions">{t.nav.terms}</Link>
-        <Link href="/refund-policy">{t.nav.refund}</Link>
-        <LanguageSwitcher current={locale} />
-      </div>
+      <HeroNav t={t.nav} locale={locale} />
 
       <div className="hero-badge">
         <span className="plate-badge">

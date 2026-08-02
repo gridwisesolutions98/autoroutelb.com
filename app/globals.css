@@ -61,13 +61,6 @@ h1, h2, .plate-wordmark {
   text-align: center;
   padding: 80px 24px 40px 24px;
 }
-.hero-nav {
-  display: flex;
-  justify-content: flex-end;
-  gap: 20px;
-  width: 100%;
-  margin-bottom: 40px;
-}
 .hero-badge { margin-bottom: 40px; }
 .hero h1 {
   font-size: clamp(2.2rem, 5vw, 3.6rem);
@@ -345,10 +338,13 @@ html {
 
   .stats-grid { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
 }
-.hero-nav {
+.hero-nav-wrap {
   position: absolute;
   top: 24px;
   right: 32px;
+  z-index: 20;
+}
+.hero-nav {
   display: flex;
   gap: 24px;
 }
@@ -360,6 +356,27 @@ html {
   font-weight: 500;
 }
 .hero-nav a:hover { color: var(--gold); }
+
+.hero-nav-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border-soft);
+  border-radius: 6px;
+  cursor: pointer;
+}
+.hero-nav-toggle span {
+  display: block;
+  width: 18px;
+  height: 2px;
+  margin: 0 auto;
+  background: var(--text-light);
+}
 
 .hero { position: relative; }
 
@@ -382,7 +399,23 @@ html {
 }
 
 @media (max-width: 640px) {
-  .hero-nav { position: static; justify-content: center; margin-bottom: 30px; }
+  .hero-nav-wrap { top: 16px; right: 16px; }
+  .hero-nav-toggle { display: flex; }
+  .hero-nav {
+    display: none;
+    position: absolute;
+    top: 46px;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 14px;
+    background: var(--panel);
+    border: 1px solid var(--border-soft);
+    border-radius: 8px;
+    padding: 16px 20px;
+    min-width: 180px;
+  }
+  .hero-nav-open { display: flex; }
 }
 .lang-btn {
   background: none;
@@ -396,6 +429,10 @@ html {
 }
 
 html[dir="rtl"] .hero-nav { flex-direction: row-reverse; }
+@media (max-width: 640px) {
+  html[dir="rtl"] .hero-nav { flex-direction: column; align-items: flex-start; right: auto; left: 0; }
+  html[dir="rtl"] .hero-nav-wrap { right: auto; left: 16px; }
+}
 html[dir="rtl"] .car-grid { direction: rtl; }
 html[dir="rtl"] .filter-bar { direction: rtl; }
 html[dir="rtl"] .field label { text-align: right; }
@@ -578,6 +615,7 @@ html { scroll-behavior: smooth; }
   animation-delay: -5.5s;
 }
 .hero > * { position: relative; z-index: 1; }
+.hero > .hero-nav-wrap { position: absolute; z-index: 20; }
 
 .hero-badge { animation: fadeInUp 0.7s var(--ease-out) both; }
 .hero h1 { animation: fadeInUp 0.7s var(--ease-out) 0.1s both; }
