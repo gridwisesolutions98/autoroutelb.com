@@ -48,8 +48,9 @@ export default function SettingsForm({ user, locale }: { user: User; locale: Loc
   };
 
   return (
-    <div className="auth-form-panel" style={{ minHeight: "100vh" }}>
+    <div className="auth-form-panel settings-panel" style={{ minHeight: "100vh" }}>
       <form onSubmit={handleSubmit}>
+        <Link href="/dashboard" className="toggle-link back-to-dashboard-top">{dict.common.backToDashboard}</Link>
         <h2>{t.title}</h2>
         {error && <div className="error-msg">{error}</div>}
         {success && <div className="error-msg" style={{ background: "#E6F4EA", color: "#1E7B34" }}>{success}</div>}
@@ -95,8 +96,6 @@ export default function SettingsForm({ user, locale }: { user: User; locale: Loc
 
         <button type="submit" className="submit-btn">{dict.common.save}</button>
       </form>
-
-      <Link href="/dashboard" className="toggle-link">{dict.common.backToDashboard}</Link>
     </div>
   );
 }
