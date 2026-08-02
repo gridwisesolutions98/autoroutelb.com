@@ -1,7 +1,10 @@
 import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { createSessionToken } from "@/lib/session";
+
+const BCRYPT_PREFIX = /^\$2[aby]?\$/;
 
 export async function POST(request: Request) {
   try {
@@ -36,10 +39,11 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "Username already taken" }, { status: 400 });
       }
 
+      const passwordHash = await bcrypt.hash(password, 10);
       const newUser = await prisma.user.create({
         data: {
           username,
-          password,
+          password: passwordHash,
           companyName: companyName || "My Agency",
           whishNumber,
           whatsappNumber,
@@ -68,8 +72,23 @@ export async function POST(request: Request) {
         where: { username },
       });
 
-      if (!user || user.password !== password) {
+      const isHashed = user ? BCRYPT_PREFIX.test(user.password) : false;
+      const passwordMatches = user
+        ? isHashed
+          ? await bcrypt.compare(password, user.password)
+          : user.password === password
+        : false;
+
+      if (!user || !passwordMatches) {
         return NextResponse.json({ error: "Invalid username or password" }, { status: 401 });
+      }
+
+      // Legacy plaintext password that just matched — upgrade it to a hash now.
+      if (!isHashed) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { password: await bcrypt.hash(password, 10) },
+        });
       }
 
       const { password: _pw, ...safeUser } = user;
