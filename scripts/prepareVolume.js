@@ -6,6 +6,16 @@
 const fs = require("fs");
 const path = require("path");
 
+// SQLite won't create missing parent directories for its db file, so make sure
+// wherever DATABASE_URL points to (e.g. a "db" subfolder on the volume) exists
+// before Prisma tries to open/migrate it.
+const dbUrl = process.env.DATABASE_URL;
+if (dbUrl && dbUrl.startsWith("file:")) {
+  const dbPath = dbUrl.slice("file:".length);
+  const absoluteDbPath = path.isAbsolute(dbPath) ? dbPath : path.join(process.cwd(), dbPath);
+  fs.mkdirSync(path.dirname(absoluteDbPath), { recursive: true });
+}
+
 const volumePath = process.env.RAILWAY_VOLUME_MOUNT_PATH;
 
 if (!volumePath) {
